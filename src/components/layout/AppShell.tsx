@@ -26,10 +26,8 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   return (
-    <div className="relative h-screen bg-[#02020a] text-slate-200 selection:bg-indigo-500/30 flex flex-col overflow-hidden">
-      {/* Background Ambience */}
-      <div className="orb w-[600px] h-[600px] bg-indigo-500/10 -top-48 -left-48" />
-      <div className="orb w-[800px] h-[800px] bg-rose-500/10 bottom-0 -right-48" style={{ animationDelay: '-10s' }} />
+    <div className="relative h-screen bg-[#02020a] text-slate-200 selection:bg-indigo-500/30 flex flex-col overflow-hidden bg-lumina">
+      {/* Background Ambience handled by bg-lumina */}
 
       {/* Nova Floating Header */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-full max-w-4xl px-4">

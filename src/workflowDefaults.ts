@@ -81,21 +81,21 @@ export function createWorkflowNode(type: NodeType, position: { x: number; y: num
 }
 
 export const initialNodes: WorkflowNode[] = [
-  { id: 'start-0', type: 'start', position: { x: 260, y: 60 }, data: createNodeData('start') },
-  { id: 'task-0', type: 'task', position: { x: 240, y: 220 }, data: createNodeData('task') },
+  { id: 'start-0', type: 'start', position: { x: 400, y: 80 }, data: createNodeData('start') },
+  { id: 'task-0', type: 'task', position: { x: 150, y: 380 }, data: createNodeData('task') },
   {
     id: 'approval-0',
     type: 'approval',
-    position: { x: 520, y: 220 },
+    position: { x: 650, y: 380 },
     data: createNodeData('approval'),
   },
   {
     id: 'automatedStep-0',
     type: 'automatedStep',
-    position: { x: 520, y: 390 },
+    position: { x: 650, y: 680 },
     data: createNodeData('automatedStep'),
   },
-  { id: 'end-0', type: 'end', position: { x: 260, y: 390 }, data: createNodeData('end') },
+  { id: 'end-0', type: 'end', position: { x: 150, y: 680 }, data: createNodeData('end') },
 ];
 
 export const initialEdges: WorkflowEdge[] = [

@@ -119,7 +119,7 @@ export function validateWorkflow(nodes: WorkflowNode[], edges: WorkflowEdge[]) {
 }
 
 export function useSimulation() {
-  const { nodes, edges, setValidationIssues, setSimulationLog } = useWorkflowSelectors();
+  const { nodes, edges, setValidationIssues, setSimulationLog, setSimulatingNodeId, pushHistory } = useWorkflowSelectors();
   const [isSimulating, setIsSimulating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -135,12 +135,46 @@ export function useSimulation() {
 
     setError(null);
     setIsSimulating(true);
+
+    // Feature 12: Save snapshot to history before running
+    pushHistory(`Simulation @ ${new Date().toLocaleTimeString()}`);
+
     try {
       const result = await simulateWorkflow({ nodes, edges });
       const entries = result.steps.map(
         (step) =>
           `${step.label} · ${step.status}${step.duration === null ? '' : ` · ${step.duration}ms`}`,
       );
+
+      // Feature 8: Animated node highlighting
+      const startNode = nodes.find((n) => n.type === 'start');
+      if (startNode) {
+        const adjacency = new Map<string, string[]>();
+        edges.forEach((e) => {
+          adjacency.set(e.source, [...(adjacency.get(e.source) ?? []), e.target]);
+        });
+
+        const visited = new Set<string>();
+        const order: string[] = [];
+        const bfsQueue = [startNode.id];
+        while (bfsQueue.length > 0) {
+          const current = bfsQueue.shift()!;
+          if (visited.has(current)) continue;
+          visited.add(current);
+          order.push(current);
+          (adjacency.get(current) ?? []).forEach((n) => {
+            if (!visited.has(n)) bfsQueue.push(n);
+          });
+        }
+
+        // Sequentially highlight each node
+        for (let i = 0; i < order.length; i++) {
+          setSimulatingNodeId(order[i]);
+          await new Promise((resolve) => setTimeout(resolve, 600));
+        }
+        setSimulatingNodeId(null);
+      }
+
       setSimulationLog(entries);
     } catch {
       setError('Simulation failed. Check MSW setup.');

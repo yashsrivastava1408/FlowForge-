@@ -3,7 +3,7 @@ import { useFieldArray, useForm, Controller, useWatch } from 'react-hook-form';
 import { useEffect } from 'react';
 import type { ZodSchema } from 'zod';
 import type { FieldConfig } from '../types/workflow';
-import { Plus, Trash2, Calendar as CalendarIcon } from 'lucide-react';
+import { Plus, Trash2, Calendar as CalendarIcon, GripVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 
@@ -135,8 +135,9 @@ export function NodeFormRenderer({ fields, schema, defaultValues, onSubmit }: No
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="flex gap-2"
+                            className="flex gap-2 items-center"
                           >
+                            <GripVertical className="w-3.5 h-3.5 text-slate-700 cursor-grab flex-shrink-0 hover:text-slate-400 transition-colors" />
                             <Controller
                               name={`params.${paramIndex}.key` as any}
                               control={control}

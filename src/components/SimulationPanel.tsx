@@ -1,116 +1,120 @@
 import { useSimulation } from '../hooks/useSimulation';
 import { useWorkflowSelectors } from '../hooks/useWorkflowStore';
 import { 
-  Play, 
-  Terminal, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle,
-  Activity
+  Play, Terminal, CheckCircle2, Clock, AlertCircle,
+  Activity, BarChart3, Users, Zap, Timer
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import { useMemo } from 'react';
 
 export function SimulationPanel() {
-  const { simulationLog } = useWorkflowSelectors();
+  const { simulationLog, nodes } = useWorkflowSelectors();
   const { runSimulation, isSimulating, error } = useSimulation();
+
+  const summary = useMemo(() => {
+    if (simulationLog.length === 0) return null;
+    const humanTasks = nodes.filter((n) => n.type === 'task' || n.type === 'approval').length;
+    const automatedTasks = nodes.filter((n) => n.type === 'automatedStep').length;
+    const bottleneck = nodes.find((n) => n.type === 'approval');
+    const estimatedDays = nodes.reduce((sum, n) => {
+      if (n.type === 'task' && n.data.dueInDays) return sum + Number(n.data.dueInDays);
+      if (n.type === 'approval' && n.data.slaHours) return sum + Number(n.data.slaHours) / 24;
+      return sum;
+    }, 0);
+    return { totalNodes: nodes.length, estimatedDays: Math.ceil(estimatedDays), bottleneck: bottleneck?.data.title ?? 'None', humanTasks, automatedTasks };
+  }, [simulationLog, nodes]);
 
   return (
     <section className="h-full flex flex-col bg-transparent">
-      {/* Dynamic Header */}
-      <div className="px-10 py-6 border-b border-white/[0.03] flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-royal/10 flex items-center justify-center shadow-inner">
-            <Activity className="w-5 h-5 text-royal" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black text-white tracking-tight uppercase tracking-[0.1em]">Workflow Sync</h3>
-            <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.3em]">Simulation / Validation</p>
-          </div>
+      {/* Compact Header */}
+      <div className="px-4 py-2 border-b border-white/[0.03] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Activity className="w-3.5 h-3.5 text-sky-400" />
+          <span className="text-[10px] font-black text-white uppercase tracking-wider">Simulation</span>
+          <span className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">Live Trace</span>
         </div>
-
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2">
           {error && (
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[9px] font-black uppercase tracking-widest">
-              <AlertCircle className="w-3.5 h-3.5" /> {error}
-            </div>
+            <span className="flex items-center gap-1 px-2 py-1 rounded bg-rose-500/10 text-rose-400 text-[8px] font-black uppercase tracking-widest">
+              <AlertCircle className="w-2.5 h-2.5" /> {error}
+            </span>
           )}
-          <button
-            type="button"
-            disabled={isSimulating}
-            onClick={() => void runSimulation()}
+          <button type="button" disabled={isSimulating} onClick={() => void runSimulation()}
             className={cn(
-              "flex items-center gap-3 px-6 py-2.5 rounded-[1.5rem_0.5rem] text-[10px] font-black uppercase tracking-widest transition-all",
-              isSimulating 
-                ? "bg-slate-800 text-slate-500 cursor-wait shadow-inner" 
-                : "bg-royal hover:bg-royal-dark text-white active:scale-95 shadow-lg shadow-royal/20"
-            )}
-          >
-            {isSimulating ? "Validating..." : "Run Simulation"}
+              "flex items-center gap-1.5 px-4 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all",
+              isSimulating ? "bg-slate-800 text-slate-500 cursor-wait" : "bg-sky-400 hover:bg-white text-black active:scale-95"
+            )}>
+            <Play className="w-3 h-3 fill-current" />
+            {isSimulating ? "Running..." : "Run Simulation"}
           </button>
         </div>
       </div>
 
-      {/* Process Log Trace */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-10 pt-4">
-        {simulationLog.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center py-10">
-            <div className="w-16 h-16 rounded-[2rem_0.5rem] bg-white/[0.02] flex items-center justify-center mb-6 border border-white/[0.03]">
-              <Terminal className="w-8 h-8 text-slate-700" />
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex min-h-0">
+        <div className="flex-1 p-4">
+          {simulationLog.length === 0 ? (
+            <div className="h-full flex items-center justify-center gap-3 text-center">
+              <Terminal className="w-6 h-6 text-slate-800" />
+              <div>
+                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Awaiting sequence</p>
+                <p className="text-[9px] text-slate-600 mt-0.5">Run simulation to see execution trace</p>
+              </div>
             </div>
-            <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-3 leading-none">Awaiting sequence</p>
-            <p className="text-[11px] text-slate-500 max-w-[240px] leading-relaxed font-bold italic opacity-60">
-              Execute a simulation to observe the decision tree in real-time.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4 relative ml-6">
-            <div className="absolute left-[15.5px] top-4 bottom-4 w-1 bg-gradient-to-b from-royal/40 via-accent/20 to-transparent" />
-            
-            <AnimatePresence>
-              {simulationLog.map((entry, index) => {
-                const isLast = index === simulationLog.length - 1;
-                return (
-                  <motion.div 
-                    key={`${entry}-${index}`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="relative pl-14 flex items-center group"
-                  >
-                    {/* Glowing Probe */}
-                    <div 
-                      className={cn(
-                        "absolute left-0 w-8 h-8 rounded-full border-4 border-[#030712] flex items-center justify-center transition-all group-hover:scale-125 z-10 shadow-2xl",
-                        isLast 
-                          ? "bg-accent shadow-accent/50 scale-110" 
-                          : "bg-royal shadow-royal/50"
-                      )}
-                    >
-                      {isLast ? <Clock className="w-3.5 h-3.5 text-white" /> : <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                    </div>
+          ) : (
+            <div className="space-y-1.5 relative ml-3">
+              <div className="absolute left-[5px] top-1 bottom-1 w-0.5 bg-gradient-to-b from-sky-400/30 to-transparent" />
+              <AnimatePresence>
+                {simulationLog.map((entry, index) => {
+                  const isLast = index === simulationLog.length - 1;
+                  return (
+                    <motion.div key={`${entry}-${index}`}
+                      initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                      className="relative pl-6 flex items-center">
+                      <div className={cn("absolute left-0 w-3 h-3 rounded-full border-2 border-[#0f1218] z-10", isLast ? "bg-emerald-500" : "bg-sky-400")} />
+                      <div className="flex-1 bg-white/[0.02] border border-white/[0.03] px-3 py-1.5 rounded-md flex items-center justify-between">
+                        <div>
+                          <span className="text-[7px] font-black text-slate-700 uppercase tracking-widest">Stage {String(index+1).padStart(2,'0')}</span>
+                          <p className="text-[9px] font-bold text-white/80 mt-0.5 leading-none">{entry}</p>
+                        </div>
+                        <span className={cn("text-[7px] font-black px-1.5 py-0.5 rounded-sm uppercase", isLast ? "bg-emerald-500/10 text-emerald-400" : "bg-sky-400/10 text-sky-400")}>
+                          {isLast ? "DONE" : "OK"}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
 
-                    <div className="flex-1 bg-white/[0.02] border border-white/[0.03] px-6 py-4 rounded-[2rem_0.75rem] flex items-center justify-between hover:bg-white/[0.05] transition-colors shadow-premium group-hover:border-white/10">
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.3em]">Process Stage 0{index + 1}</span>
-                        <p className="text-[11px] font-black text-white tracking-tight uppercase leading-none">{entry}</p>
-                      </div>
-                      <div className={cn(
-                        "text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest",
-                        isLast ? "bg-accent/10 text-accent" : "bg-royal/10 text-royal"
-                      )}>
-                        {isLast ? "PENDING" : "LIVE"}
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+        {summary && (
+          <div className="w-[220px] border-l border-white/[0.05] p-3 space-y-2">
+            <div className="flex items-center gap-1.5">
+              <BarChart3 className="w-3 h-3 text-sky-400" />
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Summary</span>
+            </div>
+            {[
+              { label: 'Nodes', value: String(summary.totalNodes), icon: Activity },
+              { label: 'Est. Days', value: String(summary.estimatedDays), icon: Timer },
+              { label: 'Bottleneck', value: summary.bottleneck, icon: AlertCircle },
+              { label: 'Human', value: String(summary.humanTasks), icon: Users },
+              { label: 'Automated', value: String(summary.automatedTasks), icon: Zap },
+            ].map(({ label, value, icon: Icon }) => (
+              <div key={label} className="flex items-center justify-between px-2 py-1.5 rounded-md bg-white/[0.02] border border-white/[0.03]">
+                <div className="flex items-center gap-1.5">
+                  <Icon className="w-2.5 h-2.5 text-slate-700" />
+                  <span className="text-[8px] font-bold text-slate-500 uppercase">{label}</span>
+                </div>
+                <span className="text-[9px] font-black text-white truncate max-w-[80px]">{value}</span>
+              </div>
+            ))}
           </div>
         )}
       </div>
     </section>
   );
 }
-
-

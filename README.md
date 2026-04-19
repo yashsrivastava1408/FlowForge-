@@ -8,14 +8,16 @@ A prototype HR workflow designer built for the Tredence AI Engineering internshi
 
 | Cinematic Dashboard | Workflow Designer |
 |:---:|:---:|
-| ![Dashboard Screenshot](./screenshots/dashboard.png) | ![Designer Screenshot](./screenshots/designer.png) |
+| <img width="1700" height="978" alt="Screenshot 2026-04-20 at 12 14 54 AM" src="https://github.com/user-attachments/assets/82684346-6df6-47b8-8a7c-64190a98b1cd" />
+ | <img width="1708" height="980" alt="Screenshot 2026-04-20 at 12 15 11 AM" src="https://github.com/user-attachments/assets/971bb06b-8546-4cb7-8abb-41ed0316d474" />
+|
 
-| Simulation & Trace | Schema-Driven Forms |
+| Simulation & Trace | 
 |:---:|:---:|
-| ![Simulation Screenshot](./screenshots/simulation.png) | ![Validation Screenshot](./screenshots/validation.png) |
+| <img width="1710" height="976" alt="Screenshot 2026-04-20 at 12 15 23 AM" src="https://github.com/user-attachments/assets/9c2b6163-6cb5-4f4e-b276-a5bb5ba61f68" /> |
 
-> [!TIP]
-> **Action Required**: To populate this gallery, create a `/screenshots` folder in the root directory and save your captures as `dashboard.png`, `designer.png`, `simulation.png`, and `properties.png`.
+
+
 
 ## Tech Stack
 

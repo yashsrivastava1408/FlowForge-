@@ -56,6 +56,18 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-white/10 hover:bg-sky-400 transition-colors rounded-full;
   }
+
+  .glass-container {
+    @apply backdrop-blur-3xl border border-white/[0.08] bg-white/[0.03] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)];
+  }
+
+  .glow-sky {
+    @apply shadow-[0_0_80px_-10px_rgba(56,189,248,0.25)];
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
 }
 
 /* Connection Edges: Dashed FlowForge Style */
@@ -79,6 +91,13 @@
 .bg-dot-pattern {
   background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
 .font-technical {

@@ -34,8 +34,9 @@ export function AppShell({ children }: AppShellProps) {
         <div className="flex items-center gap-12 h-full">
           {/* Brand Logo */}
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setView('dashboard')}>
-            <div className="w-8 h-8 bg-sky-500 rounded flex items-center justify-center">
-              <span className="text-white font-black text-xl leading-none">F</span>
+            <div className="w-10 h-10 flex items-center justify-center p-1 relative overflow-hidden">
+              <div className="absolute inset-0 bg-sky-500/20 blur-xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+              <img src="/logo.png" alt="FlowForge" className="w-full h-full object-contain relative z-10" />
             </div>
             <h1 className={cn(
               "text-xl font-display font-black tracking-tight group-hover:text-sky-400 transition-colors",

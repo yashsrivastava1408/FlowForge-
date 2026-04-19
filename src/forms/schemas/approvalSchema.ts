@@ -3,18 +3,14 @@ import type { FieldConfig } from '../../types/workflow';
 
 export const approvalSchema = z.object({
   title: z.string().min(2),
-  description: z.string().min(2),
-  approver: z.string().min(2),
-  slaHours: z.coerce.number().min(1).max(168),
-  policyLink: z.string().url(),
-  requiresComments: z.boolean(),
+  description: z.string().optional(),
+  approverRole: z.string().min(2),
+  autoApproveThreshold: z.coerce.number().min(0).max(100),
 });
 
 export const APPROVAL_FIELDS: FieldConfig[] = [
   { name: 'title', label: 'Title', type: 'text', required: true },
-  { name: 'description', label: 'Description', type: 'textarea', required: true },
-  { name: 'approver', label: 'Approver', type: 'text', required: true },
-  { name: 'slaHours', label: 'SLA (hours)', type: 'number', required: true },
-  { name: 'policyLink', label: 'Policy link', type: 'text', required: true },
-  { name: 'requiresComments', label: 'Require comments', type: 'boolean' },
+  { name: 'description', label: 'Description', type: 'textarea' },
+  { name: 'approverRole', label: 'Approver Role', type: 'text', required: true, placeholder: 'e.g. Manager, HRBP' },
+  { name: 'autoApproveThreshold', label: 'Auto-approve threshold (%)', type: 'number', required: true },
 ];

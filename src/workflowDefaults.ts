@@ -24,8 +24,10 @@ export function createNodeData(type: NodeType): WorkflowNodeData {
       return {
         title: 'Candidate Applied',
         description: 'Kick off the hiring workflow.',
-        owner: 'HR Operations',
-        kickoffDate: new Date().toISOString().slice(0, 10),
+        metadata: [
+          { key: 'source', value: 'Referral' },
+          { key: 'priority', value: 'High' }
+        ],
         validationIssues: [],
       };
     case 'task':
@@ -33,38 +35,35 @@ export function createNodeData(type: NodeType): WorkflowNodeData {
         title: 'Collect Documents',
         description: 'Request and track all hiring documents.',
         assignee: 'Recruiter',
-        dueInDays: 3,
-        instructions: 'Ask for resume, ID proof, and compensation details.',
+        dueDate: '2026-05-01',
+        customFields: [
+          { key: 'form_type', value: 'I-9' }
+        ],
         validationIssues: [],
       };
     case 'approval':
       return {
         title: 'Manager Review',
-        description: 'Approve compensation and role alignment.',
-        approver: 'Hiring Manager',
-        slaHours: 24,
-        policyLink: 'https://company.example/policy',
-        requiresComments: true,
+        approverRole: 'Hiring Manager',
+        autoApproveThreshold: 80,
         validationIssues: [],
       };
     case 'automatedStep':
       return {
         title: 'Send Offer Packet',
-        description: 'Automate outbound communication or docs.',
         automationId: 'send_email',
-        params: {
-          to: '{{candidate.email}}',
-          subject: 'Offer documents',
-          body: 'Please review the attached package.',
-        },
+        params: [
+          { key: 'to', value: '{{candidate.email}}' },
+          { key: 'subject', value: 'Offer documents' }
+        ],
         retryCount: 2,
         validationIssues: [],
       };
     case 'end':
       return {
         title: 'Onboarding Ready',
-        description: 'Workflow completed and handed to onboarding.',
-        outcome: 'Candidate cleared for onboarding',
+        endMessage: 'Workflow completed successfully.',
+        summaryFlag: true,
         validationIssues: [],
       };
   }

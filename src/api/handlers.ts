@@ -10,13 +10,16 @@ export const handlers = [
 
     const result: SimulationResult = {
       success: true,
-      steps: sortedNodes.map((node, index) => ({
-        nodeId: node.id,
-        nodeType: node.type,
-        label: node.data.title,
-        status: index < sortedNodes.length - 1 ? 'completed' : 'pending',
-        duration: index < sortedNodes.length - 1 ? 600 + index * 250 : null,
-      })),
+      steps: sortedNodes.map((node, index) => {
+        const label = node.data.title || `${node.type.charAt(0).toUpperCase() + node.type.slice(1)} Node`;
+        return {
+          nodeId: node.id,
+          nodeType: node.type,
+          label,
+          status: index < sortedNodes.length - 1 ? 'completed' : 'pending',
+          duration: index < sortedNodes.length - 1 ? 600 + index * 250 : null,
+        };
+      }),
     };
 
     return HttpResponse.json(result, { status: 200 });

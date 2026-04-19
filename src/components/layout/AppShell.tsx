@@ -141,9 +141,7 @@ export function AppShell({ children }: AppShellProps) {
         "flex-1 relative overflow-hidden",
         isLanding ? "overflow-visible" : ""
       )}>
-        <AnimatePresence mode="wait">
-          {children}
-        </AnimatePresence>
+        {children}
       </main>
     </div>
   );

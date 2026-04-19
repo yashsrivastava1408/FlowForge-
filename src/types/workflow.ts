@@ -34,36 +34,34 @@ export interface ValidationIssue {
 
 export interface BaseNodeData extends Record<string, unknown> {
   title: string;
-  description: string;
+  description?: string;
   validationIssues?: ValidationIssue[];
 }
 
 export interface StartNodeData extends BaseNodeData {
-  owner: string;
-  kickoffDate: string;
+  metadata?: Record<string, string>[];
 }
 
 export interface TaskNodeData extends BaseNodeData {
   assignee: string;
-  dueInDays: number;
-  instructions: string;
+  dueDate: string;
+  customFields?: Record<string, string>[];
 }
 
 export interface ApprovalNodeData extends BaseNodeData {
-  approver: string;
-  slaHours: number;
-  policyLink: string;
-  requiresComments: boolean;
+  approverRole: string;
+  autoApproveThreshold: number;
 }
 
 export interface AutomatedStepNodeData extends BaseNodeData {
   automationId: string;
-  params: Record<string, string>;
-  retryCount: number;
+  params: Record<string, string>[];
+  retryCount?: number;
 }
 
 export interface EndNodeData extends BaseNodeData {
-  outcome: string;
+  endMessage: string;
+  summaryFlag: boolean;
 }
 
 export type WorkflowNodeData =

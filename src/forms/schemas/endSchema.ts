@@ -3,12 +3,12 @@ import type { FieldConfig } from '../../types/workflow';
 
 export const endSchema = z.object({
   title: z.string().min(2),
-  description: z.string().min(2),
-  outcome: z.string().min(2),
+  endMessage: z.string().min(2),
+  summaryFlag: z.boolean(),
 });
 
 export const END_FIELDS: FieldConfig[] = [
   { name: 'title', label: 'Title', type: 'text', required: true },
-  { name: 'description', label: 'Description', type: 'textarea', required: true },
-  { name: 'outcome', label: 'Outcome', type: 'textarea', required: true },
+  { name: 'endMessage', label: 'End Message', type: 'textarea', required: true },
+  { name: 'summaryFlag', label: 'Show Summary', type: 'boolean' },
 ];

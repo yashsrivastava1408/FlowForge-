@@ -70,4 +70,21 @@ describe('validateWorkflow', () => {
         .some((issue) => issue.code === 'cycle'),
     ).toBe(true);
   });
+
+  it('rejects a start node with incoming edges', () => {
+    const nodes = [
+      node('start-1', 'start', 0, 0),
+      node('task-1', 'task', 0, 120),
+    ];
+    // Create a cycle back to start or just an edge to start
+    const edges = [
+      edge('s-t', 'start-1', 'task-1'),
+      edge('t-s', 'task-1', 'start-1'),
+    ];
+
+    const result = validateWorkflow(nodes, edges);
+
+    expect(result.success).toBe(false);
+    expect(result.issuesByNode['start-1']?.some((issue) => issue.code === 'start-not-first')).toBe(true);
+  });
 });

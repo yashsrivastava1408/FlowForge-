@@ -26,6 +26,15 @@ export function validateWorkflow(nodes: WorkflowNode[], edges: WorkflowEdge[]) {
         message: 'Workflow requires exactly one start node.',
       }),
     );
+  } else {
+    // Constraint: Start Node must be first (no incoming edges)
+    const startNode = startNodes[0];
+    if (incoming.has(startNode.id)) {
+      pushIssue(issuesByNode, startNode.id, {
+        code: 'start-not-first',
+        message: 'Start Node must be the entry point (no incoming edges).',
+      });
+    }
   }
 
   if (endNodes.length !== 1) {
@@ -115,7 +124,14 @@ export function validateWorkflow(nodes: WorkflowNode[], edges: WorkflowEdge[]) {
   });
 
   const success = Object.keys(issuesByNode).length === 0;
-  return { success, issuesByNode, nodeMap };
+  const criticalCodes = ['start-count', 'start-not-first', 'end-count', 'unreachable-end'];
+  const criticalIssues = Object.values(issuesByNode)
+    .flat()
+    .filter((issue) => criticalCodes.includes(issue.code));
+  
+  const hasCriticalErrors = criticalIssues.length > 0;
+
+  return { success, hasCriticalErrors, criticalIssues, issuesByNode, nodeMap };
 }
 
 export function useSimulation() {
@@ -127,9 +143,12 @@ export function useSimulation() {
     const validation = validateWorkflow(nodes, edges);
     setValidationIssues(validation.issuesByNode);
 
-    if (!validation.success) {
-      setSimulationLog([]);
-      setError('Resolve validation issues before simulation.');
+    if (validation.hasCriticalErrors) {
+      const errorLog = validation.criticalIssues.map(
+        (issue) => `CRITICAL ERROR: ${issue.message}`
+      );
+      setSimulationLog(errorLog);
+      setError('Resolve critical issues before simulation.');
       return;
     }
 
@@ -145,6 +164,9 @@ export function useSimulation() {
         (step) =>
           `${step.label} · ${step.status}${step.duration === null ? '' : ` · ${step.duration}ms`}`,
       );
+
+      // Set simulation log immediately so user sees the "plan"
+      setSimulationLog(entries);
 
       // Feature 8: Animated node highlighting
       const startNode = nodes.find((n) => n.type === 'start');
@@ -174,8 +196,6 @@ export function useSimulation() {
         }
         setSimulatingNodeId(null);
       }
-
-      setSimulationLog(entries);
     } catch {
       setError('Simulation failed. Check MSW setup.');
     } finally {

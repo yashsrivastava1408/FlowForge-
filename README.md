@@ -4,6 +4,19 @@
 
 A prototype HR workflow designer built for the Tredence AI Engineering internship case study. It demonstrates a typed React Flow graph editor, schema-driven node configuration panels, MSW-backed mock APIs, graph validation with cycle detection, animated workflow simulation, and a full suite of professional UX features — all built as a modular, extensible frontend.
 
+## Visual Showcase
+
+| Cinematic Dashboard | Workflow Designer |
+|:---:|:---:|
+| ![Dashboard Screenshot](./screenshots/dashboard.png) | ![Designer Screenshot](./screenshots/designer.png) |
+
+| Simulation & Trace | Schema-Driven Forms |
+|:---:|:---:|
+| ![Simulation Screenshot](./screenshots/simulation.png) | ![Validation Screenshot](./screenshots/validation.png) |
+
+> [!TIP]
+> **Action Required**: To populate this gallery, create a `/screenshots` folder in the root directory and save your captures as `dashboard.png`, `designer.png`, `simulation.png`, and `properties.png`.
+
 ## Tech Stack
 
 | Library | Version | Purpose |
@@ -19,6 +32,31 @@ A prototype HR workflow designer built for the Tredence AI Engineering internshi
 | Vitest | 4.1 | Unit tests for graph validation logic (BFS reachability, cycle detection, orphan checks) |
 
 ## Architecture Overview
+
+```mermaid
+graph TD
+    User([User Interactive Action]) --> UI[DesignerView/AppShell]
+    
+    subgraph Frontend Logic
+        UI --> Canvas[React Flow Canvas]
+        UI --> Form[Schema-Driven Configuration]
+        UI --> Controls[Toolbar Actions]
+    end
+
+    subgraph State Management
+        Canvas & Form & Controls --> Store[(Zustand Global Store)]
+        Store --> Validation[Graph Validator: BFS/DFS]
+    end
+
+    subgraph Backend Simulation
+        Store --> Hook[useSimulation Hook]
+        Hook --> MSW[MSW Mock API Server]
+        MSW --> Replay[Animated Logic Replay]
+    end
+
+    Validation -- Surfaced to --> Canvas
+    Replay -- Logged to --> UI
+```
 
 The application is separated into three layers:
 
@@ -88,6 +126,37 @@ src/
 
 ## Key Design Decisions
 
+## Architecture Overview
+
+```mermaid
+graph TD
+    User([User Interactive Action]) --> UI[DesignerView/AppShell]
+    
+    subgraph Frontend Logic
+        UI --> Canvas[React Flow Canvas]
+        UI --> Form[Schema-Driven Configuration]
+        UI --> Controls[Toolbar Actions]
+    end
+
+    subgraph State Management
+        Canvas & Form & Controls --> Store[(Zustand Global Store)]
+        Store --> Validation[Graph Validator: BFS/DFS]
+    end
+
+    subgraph Backend Simulation
+        Store --> Hook[useSimulation Hook]
+        Hook --> MSW[MSW Mock API Server]
+        MSW --> Replay[Animated Logic Replay]
+    end
+
+    Validation -- Surfaced to --> Canvas
+    Replay -- Logged to --> UI
+```
+
+## Key Design Decisions
+
+- **Resizable Workspace**: I implemented a custom-built, draggable resize handle for the Simulation Panel, allowing users to balance their focus between the canvas and execution logs—a standard for high-end SaaS tools.
+- **Critical vs. Non-Critical Validation**: The engine is smart enough to block simulation only on structure-breaking errors (like missing Start nodes), while allowing playback for warnings (like cycles or orphans), reflecting real-world workflow flexibility.
 - **Schema-driven forms over switch-case**: I built `NodeFormRenderer` to accept a `FieldConfig[]` and Zod schema. Adding a 6th node type requires adding one schema file and one registry entry — zero changes to the form renderer itself.
 - **Zustand over Context/Redux**: The same store powers React Flow, the form panel, validation badges, simulation state, version history, and import/export. Zustand's `useShallow` selector prevents unnecessary re-renders.
 - **MSW over JSON server**: MSW intercepts real `fetch()` calls at the Service Worker level. This keeps async behavior realistic and demonstrates production-grade mocking knowledge.
@@ -119,14 +188,16 @@ npm run build        # Production build
 ### Core Requirements (Case Study Brief)
 - Five custom node types (Start, Task, Approval, Automated Step, End) with correct handle placement
 - Drag-from-sidebar node creation on the canvas
-- Schema-driven node configuration with React Hook Form + Zod validation
+- Schema-driven node configuration with React Hook Form + Zod validation (Aligned with Brief)
 - MSW-backed `GET /api/automations` and `POST /api/simulate` endpoints
 - Dynamic automation form: dropdown fetches from API, params change per action
-- Graph validation: start/end counts, orphan detection, BFS reachability, DFS cycle detection
+- **Graph validation**: start/end counts, orphan detection, BFS reachability, DFS cycle detection, and **'Start Node must be first' constraint**
 - Simulation panel with step-by-step execution trace
-- Unit tests for validation logic (valid path, orphan detection, cycle detection)
+- Unit tests for validation logic (valid path, orphan detection, cycle detection, Start-is-entry)
 
 ### Bonus Features (Beyond Rubric)
+- **Resizable Simulation Panel** — custom draggable handle to adjust vertical workspace layout (Up/Down)
+- **Navigation Flow** — "Back to Dashboard" button with state-aware view switching
 - **Export / Import JSON** — serialize and restore entire workflows
 - **3 Workflow Templates** — Employee Onboarding, Leave Approval, Document Verification (one-click load)
 - **Auto Layout** — BFS-based DAG arrangement button
@@ -144,6 +215,7 @@ npm run build        # Production build
 - **Node Search / Filter** — type in sidebar to filter node palette
 - **Workflow Summary Card** — total nodes, estimated days, bottleneck step, human vs automated count
 - **PWA Offline Support** — manifest.json + service worker for installability
+- **Mermaid Architecture Diagram** — Integrated into documentation for visual clarity
 
 ## What I Would Add With More Time
 

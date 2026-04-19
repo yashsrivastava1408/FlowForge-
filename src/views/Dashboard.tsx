@@ -316,7 +316,16 @@ export function Dashboard() {
             </div>
             <div className="h-px w-12 bg-white/10" />
           </div>
-          <p className="text-[9px] font-technical text-slate-700 uppercase tracking-[0.4em]"><link rel="stylesheet" href="https://github.com/yashsrivastava1408/FlowForge-" /><button>github</button></p>
+          <p className="text-[9px] font-technical text-slate-700 uppercase tracking-[0.4em]">
+            <a 
+              href="https://github.com/yashsrivastava1408/FlowForge-" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-sky-400 transition-colors"
+            >
+              GITHUB REPOSITORY
+            </a>
+          </p>
         </div>
       </footer>
     </div>

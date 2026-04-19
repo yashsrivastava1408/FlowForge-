@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { NodeFormRenderer } from './NodeFormRenderer';
 import { useWorkflowSelectors } from '../hooks/useWorkflowStore';
 import { useNodeForm } from '../hooks/useNodeForm';
@@ -15,6 +16,16 @@ export function NodeFormPanel() {
   const node = nodes.find((item) => item.id === selectedNodeId);
   const { entry, fields, loading, error } = useNodeForm(node);
 
+  const defaultValues = useMemo(() => {
+    if (!node) return {};
+    return {
+      ...node.data,
+      metadata: node.data.metadata || [],
+      customFields: node.data.customFields || [],
+      params: node.data.params || [],
+    };
+  }, [node]);
+
   if (!node || !entry) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-10 text-center text-slate-600">
@@ -24,17 +35,6 @@ export function NodeFormPanel() {
       </div>
     );
   }
-
-  const defaultValues =
-    node.type === 'automatedStep'
-      ? {
-          ...node.data,
-          params: Object.entries((node.data as AutomatedStepNodeData).params).map(([key, value]) => ({
-            key,
-            value,
-          })),
-        }
-      : node.data;
 
   return (
     <div className="h-full flex flex-col bg-[#0f1218]">
@@ -79,32 +79,17 @@ export function NodeFormPanel() {
             schema={entry.schema}
             defaultValues={defaultValues}
             onSubmit={(values) => {
-              if (node.type === 'automatedStep') {
-                const params = Array.isArray(values.params)
-                  ? Object.fromEntries(
-                      values.params
-                        .filter(
-                          (item): item is { key: string; value: string } =>
-                            typeof item === 'object' &&
-                            item !== null &&
-                            'key' in item &&
-                            'value' in item &&
-                            typeof item.key === 'string' &&
-                            typeof item.value === 'string' &&
-                            item.key.length > 0,
-                        )
-                        .map((item) => [item.key, item.value]),
-                    )
-                  : {};
+              // Clean up KV arrays by removing empty keys
+              const cleanedValues = { ...values };
+              ['metadata', 'customFields', 'params'].forEach(key => {
+                if (Array.isArray(cleanedValues[key])) {
+                  cleanedValues[key] = cleanedValues[key].filter(
+                    (item: any) => item && typeof item.key === 'string' && item.key.trim().length > 0
+                  );
+                }
+              });
 
-                updateNodeData(node.id, {
-                  ...values,
-                  params,
-                });
-                return;
-              }
-
-              updateNodeData(node.id, values);
+              updateNodeData(node.id, cleanedValues);
             }}
           />
         </div>

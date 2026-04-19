@@ -10,13 +10,13 @@ import { workflowTemplates } from '../workflowTemplates';
 import { 
   Download, Upload, Layers, Play, FolderOpen, HelpCircle,
   ChevronLeft, ChevronRight, MoreVertical, Keyboard, Clock,
-  LayoutGrid, FileText, X, ChevronDown
+  LayoutGrid, FileText, X, ChevronDown, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 
 export function DesignerView() {
-  const { nodes, edges, importSnapshot, history, restoreHistory, pushHistory } = useWorkflowSelectors();
+  const { nodes, edges, setView, importSnapshot, history, restoreHistory, pushHistory } = useWorkflowSelectors();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,6 +24,32 @@ export function DesignerView() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showMoreActions, setShowMoreActions] = useState(false);
+  
+  // Resizable Bottom Panel
+  const [bottomPanelHeight, setBottomPanelHeight] = useState(200);
+  const [isResizing, setIsResizing] = useState(false);
+
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newHeight = window.innerHeight - e.clientY;
+      if (newHeight > 100 && newHeight < window.innerHeight * 0.7) {
+        setBottomPanelHeight(newHeight);
+      }
+    };
+
+    const handleMouseUp = () => setIsResizing(false);
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   useKeyboardShortcuts();
 
@@ -139,8 +165,16 @@ export function DesignerView() {
       <div className="flex-1 relative flex flex-col h-full bg-[#0b0e14]">
         {/* Compact Toolbar */}
         <div className="flex items-center justify-between border-b border-white/[0.05] bg-[#0f1218] px-4 py-2">
-          {/* Left: Stats */}
-          <div className="flex items-center gap-3">
+          {/* Left: Nav & Stats */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setView('dashboard')}
+              className="group flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 transition-all"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-slate-500 group-hover:text-white transition-colors" />
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white">Back</span>
+            </button>
+            <div className="w-px h-4 bg-white/5" />
             <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest">
               <span className="text-white">{stats.nodeCount}</span> nodes
               <span className="mx-1 text-slate-700">·</span>
@@ -148,6 +182,7 @@ export function DesignerView() {
               <span className="mx-1 text-slate-700">·</span>
               <span className={stats.isValid ? 'text-emerald-400' : 'text-amber-400'}>{stats.isValid ? '✓ Valid' : '⚠ Issues'}</span>
             </div>
+            <div className="w-px h-3 bg-white/5 mx-1" />
             <ValidationBadge />
           </div>
 
@@ -240,10 +275,6 @@ export function DesignerView() {
 
             <input ref={inputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleImport} />
 
-            {/* Primary: Simulate */}
-            <button className="ml-1 px-4 py-1.5 rounded-md bg-sky-400 text-[9px] font-black uppercase tracking-widest text-black hover:bg-white transition-all flex items-center gap-1.5 shadow-lg shadow-sky-400/10">
-              <Play className="h-3 w-3 fill-current" /> Simulate
-            </button>
           </div>
         </div>
 
@@ -275,8 +306,22 @@ export function DesignerView() {
           </div>
         </div>
 
-        {/* Simulation Panel — shorter */}
-        <div className="h-[200px] border-t border-white/[0.05] bg-[#0f1218]">
+        {/* Resizer Handle */}
+        <div 
+          onMouseDown={() => setIsResizing(true)}
+          className={cn(
+            "h-1.5 w-full cursor-row-resize z-50 hover:bg-sky-500/30 transition-colors flex items-center justify-center group relative",
+            isResizing ? "bg-sky-500/40" : "bg-transparent border-t border-white/[0.03]"
+          )}
+        >
+          <div className="w-12 h-0.5 rounded-full bg-slate-800 group-hover:bg-sky-400/50 transition-colors" />
+        </div>
+
+        {/* Simulation Panel — resizable */}
+        <div 
+          className="border-t border-white/[0.05] bg-[#0f1218] overflow-hidden"
+          style={{ height: bottomPanelHeight }}
+        >
           <SimulationPanel />
         </div>
       </div>

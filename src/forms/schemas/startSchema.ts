@@ -3,14 +3,13 @@ import type { FieldConfig } from '../../types/workflow';
 
 export const startSchema = z.object({
   title: z.string().min(2),
-  description: z.string().min(2),
-  owner: z.string().min(2),
-  kickoffDate: z.string().min(1),
+  metadata: z.array(z.object({
+    key: z.string(),
+    value: z.string(),
+  })).optional(),
 });
 
 export const START_FIELDS: FieldConfig[] = [
-  { name: 'title', label: 'Title', type: 'text', required: true },
-  { name: 'description', label: 'Description', type: 'textarea', required: true },
-  { name: 'owner', label: 'Owner', type: 'text', required: true },
-  { name: 'kickoffDate', label: 'Kickoff date', type: 'date', required: true },
+  { name: 'title', label: 'Start Title', type: 'text', required: true },
+  { name: 'metadata', label: 'Metadata', type: 'keyValue' },
 ];

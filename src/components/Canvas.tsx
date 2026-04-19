@@ -109,9 +109,5 @@ function FlowCanvas() {
 }
 
 export function Canvas() {
-  return (
-    <ReactFlowProvider>
-      <FlowCanvas />
-    </ReactFlowProvider>
-  );
+  return <FlowCanvas />;
 }

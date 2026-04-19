@@ -7,13 +7,13 @@ A prototype HR workflow designer built for the Tredence AI Engineering internshi
 ## Visual Showcase
 
 | Cinematic Dashboard | Workflow Designer |
-|:---:|:---:|
+
 | <img width="1700" height="978" alt="Screenshot 2026-04-20 at 12 14 54 AM" src="https://github.com/user-attachments/assets/82684346-6df6-47b8-8a7c-64190a98b1cd" />
  | <img width="1708" height="980" alt="Screenshot 2026-04-20 at 12 15 11 AM" src="https://github.com/user-attachments/assets/971bb06b-8546-4cb7-8abb-41ed0316d474" />
 |
 
 | Simulation & Trace | 
-|:---:|:---:|
+
 | <img width="1710" height="976" alt="Screenshot 2026-04-20 at 12 15 23 AM" src="https://github.com/user-attachments/assets/9c2b6163-6cb5-4f4e-b276-a5bb5ba61f68" /> 
 |
 

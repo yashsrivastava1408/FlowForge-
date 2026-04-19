@@ -4,6 +4,14 @@
 
 A prototype HR workflow designer built for the Tredence AI Engineering internship case study. It demonstrates a typed React Flow graph editor, schema-driven node configuration panels, MSW-backed mock APIs, graph validation with cycle detection, animated workflow simulation, and a full suite of professional UX features — all built as a modular, extensible frontend.
 
+<div align="center">
+  <br/>
+  <a href="https://flow-forge-blond.vercel.app">
+    <img src="https://img.shields.io/badge/🚀%20EXPERIENCE%20LIVE%20DEMO-0EA5E9?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" height="40"/>
+  </a>
+  <p><i>Best viewed on Desktop for full canvas interactivity</i></p>
+</div>
+
 ## Visual Showcase
 
 <div align="center">

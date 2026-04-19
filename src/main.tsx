@@ -3,12 +3,14 @@ import App from './App';
 import './index.css';
 
 async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser');
-    await worker.start({
-      onUnhandledRequest: 'bypass',
-    });
-  }
+  const { worker } = await import('./mocks/browser');
+  // Always enable mocking for this prototype to ensure live sites work
+  await worker.start({
+    onUnhandledRequest: 'bypass',
+    serviceWorker: {
+      url: '/mockServiceWorker.js'
+    }
+  });
 }
 
 enableMocking().then(() => {

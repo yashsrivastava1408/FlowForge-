@@ -47,9 +47,9 @@ export function Dashboard() {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               className="text-6xl md:text-8xl font-display font-black text-white leading-[0.9] tracking-tighter"
             >
               Design workflows <br />
@@ -59,16 +59,16 @@ export function Dashboard() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.2 }}
               className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed max-w-xl"
             >
               The industry-standard workspace for HR automation. Canvas-driven logic, schema-validated nodes, and a sandbox simulation engine for mission-critical handoffs.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.3 }}
               className="flex items-center gap-6 pt-4"
             >
               <button
@@ -83,9 +83,9 @@ export function Dashboard() {
 
           {/* Premium Image Showcase */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotateY: 20 }}
-            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative perspective-1000 group hidden lg:block"
           >
             {/* Background Glows */}

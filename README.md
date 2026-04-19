@@ -14,7 +14,8 @@ A prototype HR workflow designer built for the Tredence AI Engineering internshi
 
 | Simulation & Trace | 
 |:---:|:---:|
-| <img width="1710" height="976" alt="Screenshot 2026-04-20 at 12 15 23 AM" src="https://github.com/user-attachments/assets/9c2b6163-6cb5-4f4e-b276-a5bb5ba61f68" /> |
+| <img width="1710" height="976" alt="Screenshot 2026-04-20 at 12 15 23 AM" src="https://github.com/user-attachments/assets/9c2b6163-6cb5-4f4e-b276-a5bb5ba61f68" /> 
+|
 
 
 
